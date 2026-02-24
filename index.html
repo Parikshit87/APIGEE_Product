@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudXP – APIGEE Product & Application Onboarding v2 (Enhanced Mockup)</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --primary-blue: #1E3A8A;
+      --secondary-blue: #3B82F6;
+      --light-blue: #EFF6FF;
+      --success-green: #10B981;
+      --warning-amber: #F59E0B;
+      --error-red: #DC2626;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --border-gray: #E5E7EB;
+      --border-input: #D1D5DB;
+      --bg-page: #F9FAFB;
+      --bg-white: #fff;
+      --font: 'Segoe UI', 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body { margin: 0; font-family: var(--font); background: var(--bg-page); color: var(--text-primary); }
+
+    .header { display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 24px; background: var(--primary-blue); color: #fff; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo { font-weight: 700; font-size: 18px; }
+    .search-header { width: 320px; padding: 8px 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; }
+    .search-header::placeholder { color: rgba(255,255,255,0.7); }
+    .header-right { display: flex; align-items: center; gap: 16px; font-size: 13px; }
+    .user-info { display: flex; align-items: center; gap: 8px; }
+
+    .breadcrumb { padding: 10px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-gray); font-size: 13px; color: var(--text-secondary); }
+    .breadcrumb a { color: var(--primary-blue); text-decoration: none; }
+
+    .portal-switcher { padding: 12px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-gray); display: flex; gap: 8px; align-items: center; }
+    .portal-switcher strong { margin-right: 8px; color: var(--text-primary); }
+    .portal-btn { padding: 8px 16px; border-radius: 4px; border: 1px solid var(--border-input); background: var(--bg-white); cursor: pointer; font-size: 13px; color: var(--text-primary); }
+    .portal-btn:hover { background: var(--bg-page); }
+    .portal-btn.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+
+    .main-layout { display: flex; min-height: calc(100vh - 56px - 40px - 44px); }
+    .sidebar { width: 220px; background: var(--bg-white); border-right: 1px solid var(--border-gray); padding: 16px 0; flex-shrink: 0; }
+    .sidebar-title { padding: 0 16px 12px; font-weight: 600; font-size: 14px; color: var(--text-primary); }
+    .sidebar-item { padding: 10px 16px; font-size: 14px; color: #4B5563; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .sidebar-item:hover { background: var(--bg-page); }
+    .sidebar-item.active { background: var(--light-blue); color: var(--primary-blue); font-weight: 500; }
+
+    .content { flex: 1; padding: 24px; overflow: auto; position: relative; }
+
+    .step-nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; padding: 12px 16px; background: var(--bg-white); border-radius: 8px; border: 1px solid var(--border-gray); }
+    .step-nav strong { margin-right: 8px; color: var(--primary-blue); font-size: 14px; }
+    .step-nav button { padding: 8px 14px; border-radius: 4px; border: 1px solid var(--border-input); background: var(--bg-white); cursor: pointer; font-size: 13px; }
+    .step-nav button:hover { background: var(--bg-page); }
+    .step-nav button.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+
+    .page-title { font-size: 24px; font-weight: 600; margin-bottom: 20px; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; }
+    .card { background: var(--bg-white); border-radius: 8px; border: 1px solid var(--border-gray); padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
+    .card-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+
+    .form-row { margin-bottom: 16px; }
+    .form-row label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #374151; }
+    .form-row .required::after { content: ' *'; color: var(--error-red); }
+    .form-row input, .form-row select, .form-row textarea { width: 100%; max-width: 480px; padding: 8px 12px; border: 1px solid var(--border-input); border-radius: 4px; font-size: 14px; }
+    .form-row .hint { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: var(--font); }
+    .btn-primary { background: var(--primary-blue); color: #fff; }
+    .btn-primary:hover { background: #1E40AF; }
+    .btn-secondary { background: var(--bg-white); color: var(--primary-blue); border: 1px solid var(--border-input); }
+    .btn-secondary:hover { background: var(--bg-page); border-color: var(--primary-blue); }
+    .btn-danger { background: var(--error-red); color: #fff; }
+    .btn-danger:hover { background: #B91C1C; }
+    .btn-small { padding: 6px 12px; font-size: 12px; }
+    .btn-warning { background: var(--warning-amber); color: #fff; }
+    .btn-warning:hover { background: #D97706; }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th, .data-table td { border: 1px solid var(--border-gray); padding: 10px 12px; text-align: left; }
+    .data-table th { background: var(--primary-blue); color: #fff; font-weight: 600; }
+    .data-table tr:nth-child(even) { background: var(--bg-page); }
+    .data-table tr:hover { background: #F3F4F6; }
+    .data-table .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .data-table a { color: var(--secondary-blue); text-decoration: none; cursor: pointer; }
+    .data-table a:hover { text-decoration: underline; }
+
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .badge-success { background: #D1FAE5; color: #065F46; }
+    .badge-info { background: #DBEAFE; color: #1E40AF; }
+    .badge-warning { background: #FEF3C7; color: #92400E; }
+    .badge-na { background: #F3F4F6; color: #6B7280; }
+
+    .tooltip-block { background: #FEF3C7; border-left: 4px solid var(--warning-amber); padding: 10px 12px; margin: 12px 0; border-radius: 4px; font-size: 12px; color: #92400E; display: flex; align-items: flex-start; gap: 8px; }
+    .tooltip-block strong { flex-shrink: 0; }
+    .need-elab { position: relative; cursor: help; }
+    .need-elab::after { content: ' \24D8'; color: var(--warning-amber); font-weight: bold; }
+
+    .info-block { background: var(--light-blue); border: 1px dashed var(--secondary-blue); border-radius: 8px; padding: 16px; margin: 16px 0; }
+    .info-block h4 { margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: var(--primary-blue); }
+    .info-block p { margin: 0; font-size: 13px; color: #374151; line-height: 1.5; }
+
+    .credential-box { background: #F3F4F6; border: 1px solid var(--border-input); border-radius: 8px; padding: 16px; margin: 12px 0; font-family: monospace; font-size: 13px; word-break: break-all; }
+    .credential-box label { display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; font-family: var(--font); }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .portal-panel { display: none; }
+    .portal-panel.active { display: block; }
+
+    .footer-actions { display: flex; gap: 12px; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-gray); flex-wrap: wrap; }
+    .pagination { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--text-secondary); }
+
+    /* Toast notification */
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--success-green); color: #fff; padding: 14px 28px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 5000; opacity: 0; transition: transform 0.35s ease, opacity 0.35s ease; pointer-events: none; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* Side panel (credentials drawer) */
+    .side-panel-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.35); z-index: 4000; display: none; }
+    .side-panel-overlay.open { display: block; }
+    .side-panel { position: fixed; top: 0; right: -420px; width: 420px; height: 100%; background: var(--bg-white); box-shadow: -4px 0 20px rgba(0,0,0,0.12); z-index: 4001; transition: right 0.3s ease; padding: 24px; overflow-y: auto; }
+    .side-panel.open { right: 0; }
+    .side-panel .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .side-panel .sp-header h3 { margin: 0; font-size: 18px; }
+    .side-panel .sp-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-secondary); }
+
+    .proxy-link { color: var(--secondary-blue); text-decoration: none; cursor: pointer; }
+    .proxy-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-left">
+      <span style="font-size:20px;">&equiv;</span>
+      <span class="logo">Jio CloudXP</span>
+      <input type="text" class="search-header" placeholder="Search" />
+    </div>
+    <div class="header-right">
+      <span>&#x1F514;</span>
+      <span>&#x2699;</span>
+      <div class="user-info">
+        <span>product.admin@ril.com</span>
+        <span style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.3);display:inline-block;"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="breadcrumb" id="breadcrumb">Home &gt; Administration &gt; API Gateway &gt; Products</div>
+
+  <div class="portal-switcher">
+    <strong>Mockup &ndash; Portal:</strong>
+    <button type="button" class="portal-btn active" onclick="setPortal('admin')">Admin Portal (Product & Policy)</button>
+    <button type="button" class="portal-btn" onclick="setPortal('public')">Public Portal (Applications)</button>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">Proxies are synced from Apigee.</div>
+
+  <!-- Side panel overlay + drawer (Public Portal credentials) -->
+  <div class="side-panel-overlay" id="sp-overlay" onclick="closeSidePanel()"></div>
+  <div class="side-panel" id="sp-drawer">
+    <div class="sp-header">
+      <h3 id="sp-title">Application Credentials</h3>
+      <button class="sp-close" onclick="closeSidePanel()">&times;</button>
+    </div>
+    <div id="sp-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Use these credentials to authenticate with Keycloak (JWT) and authorize with Apigee (API calls).</p>
+      <div class="credential-box">
+        <label>Client ID</label>
+        <div id="sp-client-id">a1b2c3d4-e5f6-7890-abcd-ef1234567890</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn btn-secondary btn-small" onclick="copyText('sp-client-id')">Copy Client ID</button>
+      </div>
+      <div class="credential-box">
+        <label>Client Secret</label>
+        <div id="sp-client-secret">sEcR3t-aBcD-1234-xYzW-567890abcdef</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn btn-secondary btn-small" onclick="copyText('sp-client-secret')">Copy Client Secret</button>
+      </div>
+      <p style="font-size:12px;color:var(--error-red);">Store the Client Secret securely. It will not be shown again after you close this panel.</p>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Admin sidebar -->
+    <aside class="sidebar portal-panel active" id="sidebar-admin">
+      <div class="sidebar-title">API Gateway</div>
+      <div class="sidebar-item active" onclick="showAdminStep(1)">API Product Management</div>
+      <div class="sidebar-item" onclick="showAdminStep(2)">Create / Edit Product</div>
+      <div class="sidebar-item" onclick="showAdminStep(3)">API Proxy Management</div>
+      <div class="sidebar-item" onclick="showAdminStep(4)">Quota Configuration</div>
+    </aside>
+    <!-- Public sidebar -->
+    <aside class="sidebar portal-panel" id="sidebar-public">
+      <div class="sidebar-title">My Workspace</div>
+      <div class="sidebar-item" onclick="showPublicStep(1)">Applications</div>
+      <div class="sidebar-item" onclick="showPublicStep(2)">Create Application</div>
+    </aside>
+
+    <main class="content">
+      <!-- ==================== ADMIN PORTAL ==================== -->
+      <div id="admin-panel" class="portal-panel active">
+        <div class="step-nav">
+          <strong>Admin &ndash; Screen:</strong>
+          <button type="button" onclick="showAdminStep(1)" id="adm-step1">1. API Product Management</button>
+          <button type="button" onclick="showAdminStep(2)" id="adm-step2">2. Create / Edit Product</button>
+          <button type="button" onclick="showAdminStep(3)" id="adm-step3">3. API Proxy Management</button>
+          <button type="button" onclick="showAdminStep(4)" id="adm-step4">4. Quota Configuration</button>
+        </div>
+
+        <!-- ======= Admin 1: API Product Management (first tab) ======= -->
+        <div id="admin-screen1" class="screen active">
+          <div class="page-title">API Product Management</div>
+          <div class="card">
+            <div class="card-subtitle">Manage Product lifecycle from CloudXP Admin Portal. Changes are synced to Apigee via Management API.</div>
+            <div class="tooltip-block">
+              <strong>MORE ELABORATION REQUIRED:</strong> When deleting a Product already linked to Developer Apps: block delete vs cascade behaviour.
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+              <input type="text" placeholder="Search products..." style="width:260px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
+              <button class="btn btn-primary" onclick="showAdminStep(2)">+ Create Product</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Product ID</th>
+                  <th>Proxies</th>
+                  <th>Quota Config</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>User Management</td>
+                  <td>user-mgmt</td>
+                  <td><a class="proxy-link" onclick="navigateToProxy('users-v1')">users-v1</a></td>
+                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">2 paths</a></td>
+                  <td class="actions">
+                    <a href="#">Edit</a>
+                    <a href="#">Map/Unmap APIs</a>
+                    <span class="need-elab" title="MORE ELABORATION REQUIRED: Confirm behaviour when Product has associated Developer Apps."><a href="#">Delete</a></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Gold Tier Product</td>
+                  <td>gold-tier-product</td>
+                  <td><a class="proxy-link" onclick="navigateToProxy('orders-v1')">orders-v1</a>, <a class="proxy-link" onclick="navigateToProxy('catalog-v1')">catalog-v1</a></td>
+                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">Custom attributes</a></td>
+                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
+                </tr>
+                <tr>
+                  <td>Silver Tier Product</td>
+                  <td>silver-tier-product</td>
+                  <td><a class="proxy-link" onclick="navigateToProxy('inventory-v1')">inventory-v1</a></td>
+                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">1 path</a></td>
+                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
+                </tr>
+                <tr>
+                  <td>Billing Management</td>
+                  <td>billing-mgmt</td>
+                  <td><a class="proxy-link" onclick="navigateToProxy('billing-v1')">billing-v1</a></td>
+                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">1 path</a></td>
+                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">Showing 1&ndash;4 of 4 products</div>
+          </div>
+        </div>
+
+        <!-- ======= Admin 2: Create / Edit Product (second tab) ======= -->
+        <div id="admin-screen2" class="screen">
+          <div class="page-title">Create API Product</div>
+          <div class="card">
+            <div class="card-title">Product Details</div>
+            <div class="form-row">
+              <label class="required">Product Name</label>
+              <input type="text" placeholder="e.g. User Management, Enterprise Plan" value="User Management" />
+            </div>
+            <div class="form-row">
+              <label>Product ID</label>
+              <input type="text" placeholder="Auto-generated or custom (e.g. user-mgmt)" value="user-mgmt" />
+              <span class="hint">Used in Apigee; must be unique.</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Select Proxies (APIs)</div>
+            <div class="card-subtitle">Select proxies to include in this Product. Proxies with Product = "Not Available" are not yet categorized under any CloudXP Product.</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;">&#x2610;</th>
+                  <th>Proxy Name</th>
+                  <th>Product</th>
+                  <th>Revision</th>
+                  <th>Environment</th>
+                  <th>Last Deployed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><input type="checkbox" /></td><td>orders-v1</td><td>Gold Tier Product</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" checked /></td><td>users-v1</td><td>User Management</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>catalog-v1</td><td>Gold Tier Product</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>billing-v1</td><td>Billing Management</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>inventory-v1</td><td>Silver Tier Product</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>logging-v1</td><td><span class="badge badge-na">Not Available</span></td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
+              </tbody>
+            </table>
+            <span class="hint" style="display:block;margin-top:8px;">Proxies with Product = "Not Available" are not categorized under any CloudXP Product name yet. Selecting them will assign them to this Product.</span>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary">Save Product to Apigee</button>
+            <button class="btn btn-secondary" onclick="showAdminStep(1)">Cancel</button>
+          </div>
+        </div>
+
+        <!-- ======= Admin 3: API Proxy Management (third tab, renamed from Deployed Proxies) ======= -->
+        <div id="admin-screen3" class="screen">
+          <div class="page-title">API Proxy Management <span style="font-size:14px;color:var(--text-secondary);font-weight:400;">(Discover from Apigee)</span></div>
+          <div class="card">
+            <div class="card-subtitle">Product Admin can view all deployed Proxies. Data is read from Apigee Management API.</div>
+            <div class="tooltip-block">
+              <strong>MORE ELABORATION REQUIRED:</strong> Exact Apigee API path and which environment(s) to list (e.g. prod only vs all).
+            </div>
+            <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+              <input type="text" placeholder="Search proxies..." id="proxy-search" style="width:220px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
+              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-env-filter">
+                <option>Environment: All</option>
+                <option>prod</option>
+                <option>test</option>
+              </select>
+              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-product-filter" onchange="filterProxiesByProduct()">
+                <option value="All">Product: All</option>
+                <option value="Gold Tier Product">Gold Tier Product</option>
+                <option value="Silver Tier Product">Silver Tier Product</option>
+                <option value="User Management">User Management</option>
+                <option value="Billing Management">Billing Management</option>
+              </select>
+              <button class="btn btn-primary btn-small" onclick="refreshFromApigee()">Refresh from Apigee</button>
+            </div>
+            <table class="data-table" id="proxy-table">
+              <thead>
+                <tr>
+                  <th>Proxy Name</th>
+                  <th>Product</th>
+                  <th>Revision</th>
+                  <th>Environment</th>
+                  <th>Last Deployed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="proxy-tbody">
+                <tr data-product="Gold Tier Product" data-proxy="orders-v1"><td>orders-v1</td><td class="prod-col">Gold Tier Product</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr data-product="User Management" data-proxy="users-v1"><td>users-v1</td><td class="prod-col">User Management</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr data-product="Gold Tier Product" data-proxy="catalog-v1"><td>catalog-v1</td><td class="prod-col">Gold Tier Product</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr data-product="Billing Management" data-proxy="billing-v1"><td>billing-v1</td><td class="prod-col">Billing Management</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr data-product="Silver Tier Product" data-proxy="inventory-v1"><td>inventory-v1</td><td class="prod-col">Silver Tier Product</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
+                <tr data-product="" data-proxy="logging-v1"><td>logging-v1</td><td class="prod-col"><span class="badge badge-na">Not Available</span></td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
+              </tbody>
+            </table>
+            <div class="pagination" id="proxy-pagination">Showing 1&ndash;6 of 6 proxies</div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary" onclick="showAdminStep(2)">Create New Product &rarr;</button>
+            <button class="btn btn-secondary" onclick="showAdminStep(4)">Configure Quotas &rarr;</button>
+          </div>
+        </div>
+
+        <!-- ======= Admin 4: Quota Configuration (sub-tab of API Proxy Management) ======= -->
+        <div id="admin-screen4" class="screen">
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
+            <a style="color:var(--secondary-blue);cursor:pointer;text-decoration:none;" onclick="showAdminStep(3)">API Proxy Management</a> &rsaquo; Quota Configuration
+          </div>
+          <div class="page-title">Quota Configuration</div>
+          <div class="card">
+            <div class="card-subtitle">Define and manage quotas at the resource path level per API Product. Stored via Custom Attributes or Operation Groups (Apigee X).</div>
+            <div class="tooltip-block">
+              <strong>MORE ELABORATION REQUIRED:</strong> Whether map/unmap is at proxy level only or proxy + path; exact Apigee model (proxies vs apiResources/operationGroup).
+            </div>
+            <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+              <div class="form-row" style="margin-bottom:0;">
+                <label class="required" style="margin-bottom:4px;">API Product</label>
+                <select style="max-width:300px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;">
+                  <option>User Management</option>
+                  <option>Gold Tier Product</option>
+                  <option>Silver Tier Product</option>
+                  <option>Billing Management</option>
+                </select>
+              </div>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Resource Path</th>
+                  <th>Method</th>
+                  <th>Quota (calls)</th>
+                  <th>Interval</th>
+                  <th>Time Unit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>/users</td>
+                  <td>POST</td>
+                  <td>100</td>
+                  <td>1</td>
+                  <td>minute</td>
+                </tr>
+                <tr>
+                  <td>/users/{id}</td>
+                  <td>GET</td>
+                  <td>1000</td>
+                  <td>1</td>
+                  <td>minute</td>
+                </tr>
+                <tr>
+                  <td>/users/{id}</td>
+                  <td>PUT</td>
+                  <td>200</td>
+                  <td>1</td>
+                  <td>minute</td>
+                </tr>
+                <tr>
+                  <td>/users/{id}</td>
+                  <td>DELETE</td>
+                  <td>50</td>
+                  <td>1</td>
+                  <td>hour</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">Showing 1&ndash;4 of 4 quota rules</div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary">Configure Quota</button>
+            <button class="btn btn-secondary">Modify Quota</button>
+            <button class="btn btn-secondary" onclick="showAdminStep(3)">&larr; Back to API Proxy Management</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PUBLIC PORTAL ==================== -->
+      <div id="public-panel" class="portal-panel">
+        <div class="step-nav">
+          <strong>Public &ndash; Screen:</strong>
+          <button type="button" onclick="showPublicStep(1)" id="pub-step1">1. Applications Dashboard</button>
+          <button type="button" onclick="showPublicStep(2)" id="pub-step2">2. Create Application</button>
+        </div>
+
+        <!-- ======= Public 1: Applications Dashboard (enhanced) ======= -->
+        <div id="public-screen1" class="screen active">
+          <div class="page-title">Applications</div>
+          <div class="card">
+            <div class="card-subtitle">Manage your registered applications. Each application holds a single Client ID/Secret valid for Keycloak (JWT) and Apigee (API authorization).</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+              <input type="text" placeholder="Search applications..." style="width:260px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
+              <button class="btn btn-primary" onclick="showPublicStep(2)">+ Create Application</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>App Name</th>
+                    <th>Project Name</th>
+                    <th>Project ID</th>
+                    <th>API Products</th>
+                    <th>Proxies</th>
+                    <th>View Credentials</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Updated By</th>
+                    <th>Updated On</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Billing Service App</td>
+                    <td>Project123</td>
+                    <td>proj-123</td>
+                    <td>User Management, Gold Tier Product</td>
+                    <td>users-v1, orders-v1, catalog-v1</td>
+                    <td><a onclick="openSidePanel('Billing Service App')">View</a></td>
+                    <td>customer.admin@acme.com</td>
+                    <td>10-Feb-2026 09:30</td>
+                    <td>customer.admin@acme.com</td>
+                    <td>11-Feb-2026 14:15</td>
+                    <td class="actions">
+                      <button class="btn btn-danger btn-small">Revoke App</button>
+                      <button class="btn btn-warning btn-small">Regenerate Secret</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Analytics Pipeline</td>
+                    <td>Project456</td>
+                    <td>proj-456</td>
+                    <td>Silver Tier Product</td>
+                    <td>inventory-v1</td>
+                    <td><a onclick="openSidePanel('Analytics Pipeline')">View</a></td>
+                    <td>ops.lead@acme.com</td>
+                    <td>08-Feb-2026 16:00</td>
+                    <td>ops.lead@acme.com</td>
+                    <td>08-Feb-2026 16:00</td>
+                    <td class="actions">
+                      <button class="btn btn-danger btn-small">Revoke App</button>
+                      <button class="btn btn-warning btn-small">Regenerate Secret</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">Showing 1&ndash;2 of 2 applications</div>
+            <div class="tooltip-block">
+              <strong>MORE ELABORATION REQUIRED:</strong> Revoke App behaviour (soft delete vs hard delete vs disable in Keycloak + Apigee). Regenerate Secret behaviour (invalidate old secret immediately or grace period).
+            </div>
+          </div>
+        </div>
+
+        <!-- ======= Public 2: Create Application (enhanced) ======= -->
+        <div id="public-screen2" class="screen">
+          <div class="page-title">Create New Application</div>
+          <div class="info-block">
+            <h4>Single credential for Keycloak + Apigee</h4>
+            <p>Creating an Application provisions a Client in Keycloak and a Developer App in Apigee with the same Client ID and Client Secret. Use these credentials to get a JWT from Keycloak and call APIs via Apigee.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Application Details</div>
+            <div class="form-row">
+              <label class="required">App Name</label>
+              <input type="text" placeholder="e.g. My Billing Integration" value="Billing Service App" />
+            </div>
+            <div class="form-row">
+              <label>Realm</label>
+              <select disabled style="background:#F3F4F6;max-width:300px;">
+                <option>HCMPAPI</option>
+              </select>
+              <span class="hint">Keycloak Realm (read-only). <span class="need-elab" title="MORE ELABORATION REQUIRED: Confirm if Realm is always HCMPAPI or configurable per org.">Realm assignment</span></span>
+            </div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
+              <div class="form-row" style="flex:1;min-width:200px;">
+                <label class="required">Project Name</label>
+                <select id="project-name-select" onchange="autoPopulateProjectId()" style="max-width:300px;">
+                  <option value="">-- Select Project --</option>
+                  <option value="proj-default" selected>Default Project</option>
+                  <option value="proj-123">Project123</option>
+                  <option value="proj-456">Project456</option>
+                </select>
+                <span class="hint">Select a project. The claim <code>project_id</code> will be added to the JWT.</span>
+              </div>
+              <div class="form-row" style="flex:1;min-width:200px;">
+                <label>Project ID</label>
+                <input type="text" id="project-id-auto" value="proj-default" readonly style="background:#F3F4F6;max-width:300px;" />
+                <span class="hint">Auto-populated based on Project Name selection.</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="required">API Products</label>
+              <select multiple style="min-height:100px;max-width:480px;" id="api-product-select" onchange="showSelectedProxies()">
+                <option value="user-mgmt">User Management</option>
+                <option value="gold-tier">Gold Tier Product</option>
+                <option value="silver-tier">Silver Tier Product</option>
+                <option value="billing-mgmt">Billing Management</option>
+              </select>
+              <span class="hint">Select one or more API Products this application can access via Apigee.</span>
+            </div>
+            <!-- Associated Proxies table (shown when products selected) -->
+            <div id="associated-proxies-section" style="display:none;margin-top:16px;">
+              <div class="card-title" style="font-size:14px;">Associated Proxies (from selected API Products)</div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Proxy Name</th>
+                    <th>Revision</th>
+                    <th>Last Deployed</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="associated-proxies-tbody"></tbody>
+              </table>
+            </div>
+            <div class="tooltip-block" style="margin-top:16px;">
+              <strong>MORE ELABORATION REQUIRED:</strong> Mapping of Customer Admin to Apigee Developer (one per org vs per user vs per app).
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary" onclick="createAppSuccess()">Create Application</button>
+            <button class="btn btn-secondary" onclick="showPublicStep(1)">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer style="padding:12px 24px;background:var(--bg-white);border-top:1px solid var(--border-gray);font-size:12px;color:var(--text-secondary);">
+    Jio CloudXP Platform. Copyright &copy; 2026 Reliance Jio Infocom Ltd. All rights reserved. | Stakeholder mockup v2 &ndash; APIGEE Product & Application Onboarding (Enhanced). Not for production use.
+  </footer>
+
+  <script>
+    /* ---- Portal switch ---- */
+    function setPortal(portal) {
+      document.querySelectorAll('.portal-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelector('.portal-switcher button:nth-child(' + (portal === 'admin' ? 2 : 3) + ')').classList.add('active');
+      document.getElementById('sidebar-admin').classList.toggle('active', portal === 'admin');
+      document.getElementById('sidebar-public').classList.toggle('active', portal === 'public');
+      document.getElementById('admin-panel').classList.toggle('active', portal === 'admin');
+      document.getElementById('public-panel').classList.toggle('active', portal === 'public');
+      document.getElementById('breadcrumb').textContent = portal === 'admin'
+        ? 'Home > Administration > API Gateway > Products'
+        : 'Home > My Workspace > Applications';
+    }
+
+    /* ---- Admin step nav ---- */
+    function showAdminStep(n) {
+      for (var i = 1; i <= 4; i++) {
+        var el = document.getElementById('admin-screen' + i);
+        if (el) el.classList.toggle('active', i === n);
+        var btn = document.getElementById('adm-step' + i);
+        if (btn) btn.classList.toggle('active', i === n);
+      }
+      document.querySelectorAll('#sidebar-admin .sidebar-item').forEach(function(item, idx) {
+        item.classList.toggle('active', idx === n - 1);
+      });
+      if (n === 3) resetProxyFilter();
+    }
+
+    /* ---- Public step nav ---- */
+    function showPublicStep(n) {
+      for (var i = 1; i <= 2; i++) {
+        var el = document.getElementById('public-screen' + i);
+        if (el) el.classList.toggle('active', i === n);
+        var btn = document.getElementById('pub-step' + i);
+        if (btn) btn.classList.toggle('active', i === n);
+      }
+      document.querySelectorAll('#sidebar-public .sidebar-item').forEach(function(item, idx) {
+        item.classList.toggle('active', idx === n - 1);
+      });
+    }
+
+    /* ---- Admin: Refresh from Apigee (toast) ---- */
+    function refreshFromApigee() {
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+
+    /* ---- Admin: Filter proxies by Product dropdown ---- */
+    function filterProxiesByProduct() {
+      var val = document.getElementById('proxy-product-filter').value;
+      var rows = document.querySelectorAll('#proxy-tbody tr');
+      var count = 0;
+      rows.forEach(function(row) {
+        var prod = row.getAttribute('data-product');
+        if (val === 'All' || prod === val) { row.style.display = ''; count++; }
+        else { row.style.display = 'none'; }
+      });
+      document.getElementById('proxy-pagination').textContent = 'Showing 1\u2013' + count + ' of ' + count + ' proxies';
+    }
+    function resetProxyFilter() {
+      document.getElementById('proxy-product-filter').value = 'All';
+      filterProxiesByProduct();
+    }
+
+    /* ---- Admin: Navigate to Deployed Proxies filtered to one proxy (from Product Mgmt) ---- */
+    function navigateToProxy(proxyName) {
+      showAdminStep(3);
+      var rows = document.querySelectorAll('#proxy-tbody tr');
+      var count = 0;
+      rows.forEach(function(row) {
+        if (row.getAttribute('data-proxy') === proxyName) { row.style.display = ''; count++; }
+        else { row.style.display = 'none'; }
+      });
+      document.getElementById('proxy-product-filter').value = 'All';
+      document.getElementById('proxy-search').value = proxyName;
+      document.getElementById('proxy-pagination').textContent = 'Showing 1\u2013' + count + ' of ' + count + ' proxies (filtered: ' + proxyName + ')';
+    }
+
+    /* ---- Public: Auto-populate Project ID ---- */
+    function autoPopulateProjectId() {
+      var sel = document.getElementById('project-name-select');
+      document.getElementById('project-id-auto').value = sel.value || '';
+    }
+
+    /* ---- Public: Show associated proxies when API Products selected ---- */
+    var proxyMap = {
+      'user-mgmt': [{ name: 'users-v1', rev: '8', deployed: '09-Feb-2026 11:00', status: 'Deployed' }],
+      'gold-tier': [{ name: 'orders-v1', rev: '12', deployed: '10-Feb-2026 14:30', status: 'Deployed' }, { name: 'catalog-v1', rev: '5', deployed: '08-Feb-2026 09:15', status: 'Deployed' }],
+      'silver-tier': [{ name: 'inventory-v1', rev: '3', deployed: '07-Feb-2026 16:45', status: 'Test' }],
+      'billing-mgmt': [{ name: 'billing-v1', rev: '2', deployed: '07-Feb-2026 10:00', status: 'Deployed' }]
+    };
+    function showSelectedProxies() {
+      var sel = document.getElementById('api-product-select');
+      var chosen = Array.from(sel.selectedOptions).map(function(o) { return o.value; });
+      var section = document.getElementById('associated-proxies-section');
+      var tbody = document.getElementById('associated-proxies-tbody');
+      tbody.innerHTML = '';
+      var seen = {};
+      chosen.forEach(function(p) {
+        (proxyMap[p] || []).forEach(function(px) {
+          if (!seen[px.name]) {
+            seen[px.name] = true;
+            var cls = px.status === 'Deployed' ? 'badge-success' : 'badge-info';
+            tbody.innerHTML += '<tr><td>' + px.name + '</td><td>' + px.rev + '</td><td>' + px.deployed + '</td><td><span class="badge ' + cls + '">' + px.status + '</span></td></tr>';
+          }
+        });
+      });
+      section.style.display = tbody.innerHTML ? 'block' : 'none';
+    }
+
+    /* ---- Public: Create Application success -> show toast notification ---- */
+    function createAppSuccess() {
+      var toast = document.getElementById('toast');
+      toast.textContent = 'App is successfully created in APIGEE. To access Client ID and Client Secret, check the credentials from dashboard.';
+      toast.classList.add('show');
+      setTimeout(function() {
+        toast.classList.remove('show');
+        toast.textContent = 'Proxies are synced from Apigee.';
+        showPublicStep(1);
+      }, 3000);
+    }
+
+    /* ---- Side panel (credentials drawer) ---- */
+    function openSidePanel(appName) {
+      document.getElementById('sp-title').textContent = 'Credentials \u2013 ' + appName;
+      document.getElementById('sp-overlay').classList.add('open');
+      document.getElementById('sp-drawer').classList.add('open');
+    }
+    function closeSidePanel() {
+      document.getElementById('sp-overlay').classList.remove('open');
+      document.getElementById('sp-drawer').classList.remove('open');
+    }
+    function copyText(elId) {
+      var text = document.getElementById(elId).textContent;
+      if (navigator.clipboard) { navigator.clipboard.writeText(text); }
+      var toast = document.getElementById('toast');
+      toast.textContent = 'Copied to clipboard.';
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); toast.textContent = 'Proxies are synced from Apigee.'; }, 1500);
+    }
+
+    /* ---- Init ---- */
+    document.getElementById('adm-step1').classList.add('active');
+    document.getElementById('pub-step1').classList.add('active');
+    filterProxiesByProduct();
+    autoPopulateProjectId();
+  </script>
+</body>
+</html>
