@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CloudXP – APIGEE Product & Application Onboarding v2 (Enhanced Mockup)</title>
+  <title>CloudXP – APIGEE Product & API User Onboarding v4 (Enhanced Mockup)</title>
   <style>
     * { box-sizing: border-box; }
     :root {
@@ -32,7 +32,6 @@
     .user-info { display: flex; align-items: center; gap: 8px; }
 
     .breadcrumb { padding: 10px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-gray); font-size: 13px; color: var(--text-secondary); }
-    .breadcrumb a { color: var(--primary-blue); text-decoration: none; }
 
     .portal-switcher { padding: 12px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-gray); display: flex; gap: 8px; align-items: center; }
     .portal-switcher strong { margin-right: 8px; color: var(--text-primary); }
@@ -76,6 +75,7 @@
     .btn-small { padding: 6px 12px; font-size: 12px; }
     .btn-warning { background: var(--warning-amber); color: #fff; }
     .btn-warning:hover { background: #D97706; }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
     .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .data-table th, .data-table td { border: 1px solid var(--border-gray); padding: 10px 12px; text-align: left; }
@@ -90,6 +90,7 @@
     .badge-success { background: #D1FAE5; color: #065F46; }
     .badge-info { background: #DBEAFE; color: #1E40AF; }
     .badge-warning { background: #FEF3C7; color: #92400E; }
+    .badge-danger { background: #FEE2E2; color: #991B1B; }
     .badge-na { background: #F3F4F6; color: #6B7280; }
 
     .tooltip-block { background: #FEF3C7; border-left: 4px solid var(--warning-amber); padding: 10px 12px; margin: 12px 0; border-radius: 4px; font-size: 12px; color: #92400E; display: flex; align-items: flex-start; gap: 8px; }
@@ -110,16 +111,23 @@
     .portal-panel.active { display: block; }
 
     .footer-actions { display: flex; gap: 12px; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-gray); flex-wrap: wrap; }
-    .pagination { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--text-secondary); }
 
-    /* Toast notification */
+    .pagination-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding: 12px 0; border-top: 1px solid var(--border-gray); font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; gap: 12px; }
+    .pagination-bar .pag-info { display: flex; align-items: center; gap: 8px; }
+    .pagination-bar .pag-controls { display: flex; align-items: center; gap: 4px; }
+    .pag-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-input); border-radius: 4px; background: var(--bg-white); cursor: pointer; font-size: 13px; color: var(--text-primary); }
+    .pag-btn:hover { background: var(--bg-page); border-color: var(--primary-blue); }
+    .pag-btn.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+    .pag-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+    .pag-select { padding: 4px 8px; border: 1px solid var(--border-input); border-radius: 4px; font-size: 13px; }
+
     .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--success-green); color: #fff; padding: 14px 28px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 5000; opacity: 0; transition: transform 0.35s ease, opacity 0.35s ease; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    /* Side panel (credentials drawer) */
+    /* Side panel */
     .side-panel-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.35); z-index: 4000; display: none; }
     .side-panel-overlay.open { display: block; }
-    .side-panel { position: fixed; top: 0; right: -420px; width: 420px; height: 100%; background: var(--bg-white); box-shadow: -4px 0 20px rgba(0,0,0,0.12); z-index: 4001; transition: right 0.3s ease; padding: 24px; overflow-y: auto; }
+    .side-panel { position: fixed; top: 0; right: -480px; width: 480px; height: 100%; background: var(--bg-white); box-shadow: -4px 0 20px rgba(0,0,0,0.12); z-index: 4001; transition: right 0.3s ease; padding: 24px; overflow-y: auto; }
     .side-panel.open { right: 0; }
     .side-panel .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .side-panel .sp-header h3 { margin: 0; font-size: 18px; }
@@ -127,6 +135,40 @@
 
     .proxy-link { color: var(--secondary-blue); text-decoration: none; cursor: pointer; }
     .proxy-link:hover { text-decoration: underline; }
+
+    .action-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px; background: var(--bg-white); border: 1px solid var(--border-gray); border-radius: 8px; margin-bottom: 16px; }
+    .action-bar .search-box { width: 240px; padding: 8px 12px; border: 1px solid var(--border-input); border-radius: 4px; font-size: 13px; }
+    .action-bar .spacer { flex: 1; }
+
+    /* Confirmation modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 6000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--bg-white); border-radius: 12px; padding: 28px 32px; max-width: 460px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .modal-box h3 { margin: 0 0 12px; font-size: 18px; }
+    .modal-box p { margin: 0 0 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .modal-box .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+    /* Checkbox dropdown (multi-select projects) */
+    .cb-dropdown { position: relative; display: inline-block; width: 100%; max-width: 480px; }
+    .cb-dropdown-trigger { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--border-input); border-radius: 4px; font-size: 14px; cursor: pointer; background: var(--bg-white); min-height: 38px; }
+    .cb-dropdown-trigger::after { content: '\25BE'; margin-left: 8px; color: var(--text-secondary); }
+    .cb-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-white); border: 1px solid var(--border-input); border-radius: 0 0 4px 4px; max-height: 200px; overflow-y: auto; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .cb-dropdown-menu.open { display: block; }
+    .cb-dropdown-menu label { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; margin-bottom: 0; font-weight: 400; }
+    .cb-dropdown-menu label:hover { background: var(--bg-page); }
+    .cb-dropdown-menu input[type="checkbox"] { width: auto; }
+
+    /* API Product checkbox list */
+    .cb-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border-input); border-radius: 4px; max-width: 480px; max-height: 180px; overflow-y: auto; }
+    .cb-list label { display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; cursor: pointer; margin-bottom: 0; font-weight: 400; border-bottom: 1px solid var(--border-gray); }
+    .cb-list label:last-child { border-bottom: none; }
+    .cb-list label:hover { background: var(--bg-page); }
+    .cb-list input[type="checkbox"] { width: auto; }
+
+    /* Warning callout */
+    .warning-callout { background: #FEF3C7; border: 1px solid var(--warning-amber); border-radius: 8px; padding: 14px 16px; margin: 16px 0; display: flex; align-items: flex-start; gap: 10px; }
+    .warning-callout .warn-icon { font-size: 20px; flex-shrink: 0; }
+    .warning-callout p { margin: 0; font-size: 13px; color: #92400E; line-height: 1.5; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -152,36 +194,28 @@
   <div class="portal-switcher">
     <strong>Mockup &ndash; Portal:</strong>
     <button type="button" class="portal-btn active" onclick="setPortal('admin')">Admin Portal (Product & Policy)</button>
-    <button type="button" class="portal-btn" onclick="setPortal('public')">Public Portal (Applications)</button>
+    <button type="button" class="portal-btn" onclick="setPortal('public')">Public Portal (API Users)</button>
   </div>
 
   <!-- Toast notification -->
-  <div class="toast" id="toast">Proxies are synced from Apigee.</div>
+  <div class="toast" id="toast"></div>
 
-  <!-- Side panel overlay + drawer (Public Portal credentials) -->
+  <!-- Side panel overlay + drawer -->
   <div class="side-panel-overlay" id="sp-overlay" onclick="closeSidePanel()"></div>
   <div class="side-panel" id="sp-drawer">
     <div class="sp-header">
-      <h3 id="sp-title">Application Credentials</h3>
+      <h3 id="sp-title"></h3>
       <button class="sp-close" onclick="closeSidePanel()">&times;</button>
     </div>
-    <div id="sp-body">
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Use these credentials to authenticate with Keycloak (JWT) and authorize with Apigee (API calls).</p>
-      <div class="credential-box">
-        <label>Client ID</label>
-        <div id="sp-client-id">a1b2c3d4-e5f6-7890-abcd-ef1234567890</div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button class="btn btn-secondary btn-small" onclick="copyText('sp-client-id')">Copy Client ID</button>
-      </div>
-      <div class="credential-box">
-        <label>Client Secret</label>
-        <div id="sp-client-secret">sEcR3t-aBcD-1234-xYzW-567890abcdef</div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button class="btn btn-secondary btn-small" onclick="copyText('sp-client-secret')">Copy Client Secret</button>
-      </div>
-      <p style="font-size:12px;color:var(--error-red);">Store the Client Secret securely. It will not be shown again after you close this panel.</p>
+    <div id="sp-body"></div>
+  </div>
+
+  <!-- Confirmation modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+      <h3 id="modal-title"></h3>
+      <p id="modal-msg"></p>
+      <div class="modal-actions" id="modal-actions"></div>
     </div>
   </div>
 
@@ -197,12 +231,12 @@
     <!-- Public sidebar -->
     <aside class="sidebar portal-panel" id="sidebar-public">
       <div class="sidebar-title">My Workspace</div>
-      <div class="sidebar-item" onclick="showPublicStep(1)">Applications</div>
-      <div class="sidebar-item" onclick="showPublicStep(2)">Create Application</div>
+      <div class="sidebar-item" onclick="showPublicStep(1)">API User Management</div>
+      <div class="sidebar-item" onclick="showPublicStep(2)">Create API User</div>
     </aside>
 
     <main class="content">
-      <!-- ==================== ADMIN PORTAL ==================== -->
+      <!-- ==================== ADMIN PORTAL (unchanged from v3) ==================== -->
       <div id="admin-panel" class="portal-panel active">
         <div class="step-nav">
           <strong>Admin &ndash; Screen:</strong>
@@ -212,385 +246,292 @@
           <button type="button" onclick="showAdminStep(4)" id="adm-step4">4. Quota Configuration</button>
         </div>
 
-        <!-- ======= Admin 1: API Product Management (first tab) ======= -->
+        <!-- Admin 1: API Product Management -->
         <div id="admin-screen1" class="screen active">
           <div class="page-title">API Product Management</div>
           <div class="card">
             <div class="card-subtitle">Manage Product lifecycle from CloudXP Admin Portal. Changes are synced to Apigee via Management API.</div>
-            <div class="tooltip-block">
-              <strong>MORE ELABORATION REQUIRED:</strong> When deleting a Product already linked to Developer Apps: block delete vs cascade behaviour.
+            <div class="tooltip-block"><strong>NEED MORE ELABORATION:</strong> When deleting a Product already linked to Developer Apps: block delete vs cascade behaviour.</div>
+            <div class="action-bar">
+              <input type="text" class="search-box" placeholder="Search products..." />
+              <span class="spacer"></span>
+              <button class="btn btn-primary btn-small" onclick="showAdminStep(2)">+ Create Product</button>
+              <button class="btn btn-secondary btn-small" onclick="editSelectedProduct()">Edit</button>
+              <button class="btn btn-secondary btn-small" onclick="mapUnmapAPIs()">Map / Unmap APIs</button>
+              <button class="btn btn-danger btn-small" onclick="deleteSelectedProduct()">Delete</button>
+              <button class="btn btn-secondary btn-small" onclick="viewQuotaForSelected()">View Quota Configuration</button>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
-              <input type="text" placeholder="Search products..." style="width:260px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
-              <button class="btn btn-primary" onclick="showAdminStep(2)">+ Create Product</button>
+            <div class="tooltip-block" style="margin-top:0;margin-bottom:12px;"><strong>NEED MORE ELABORATION:</strong> Confirm behaviour when Product has associated Developer Apps (Delete action).</div>
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="product-table">
+                <thead><tr><th style="width:40px;"><input type="checkbox" id="product-select-all" onclick="toggleAllProducts(this)" /></th><th>Product Name</th><th>Product ID</th><th>Proxies</th></tr></thead>
+                <tbody id="product-tbody">
+                  <tr data-product-name="User Management"><td><input type="checkbox" class="product-cb" value="User Management" /></td><td>User Management</td><td>user-mgmt</td><td><a class="proxy-link" onclick="navigateToProxy('users-v1')">users-v1</a></td></tr>
+                  <tr data-product-name="Gold Tier Product"><td><input type="checkbox" class="product-cb" value="Gold Tier Product" /></td><td>Gold Tier Product</td><td>gold-tier-product</td><td><a class="proxy-link" onclick="navigateToProxy('orders-v1')">orders-v1</a>, <a class="proxy-link" onclick="navigateToProxy('catalog-v1')">catalog-v1</a></td></tr>
+                  <tr data-product-name="Silver Tier Product"><td><input type="checkbox" class="product-cb" value="Silver Tier Product" /></td><td>Silver Tier Product</td><td>silver-tier-product</td><td><a class="proxy-link" onclick="navigateToProxy('inventory-v1')">inventory-v1</a></td></tr>
+                  <tr data-product-name="Billing Management"><td><input type="checkbox" class="product-cb" value="Billing Management" /></td><td>Billing Management</td><td>billing-mgmt</td><td><a class="proxy-link" onclick="navigateToProxy('billing-v1')">billing-v1</a></td></tr>
+                </tbody>
+              </table>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Product ID</th>
-                  <th>Proxies</th>
-                  <th>Quota Config</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>User Management</td>
-                  <td>user-mgmt</td>
-                  <td><a class="proxy-link" onclick="navigateToProxy('users-v1')">users-v1</a></td>
-                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">2 paths</a></td>
-                  <td class="actions">
-                    <a href="#">Edit</a>
-                    <a href="#">Map/Unmap APIs</a>
-                    <span class="need-elab" title="MORE ELABORATION REQUIRED: Confirm behaviour when Product has associated Developer Apps."><a href="#">Delete</a></span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Gold Tier Product</td>
-                  <td>gold-tier-product</td>
-                  <td><a class="proxy-link" onclick="navigateToProxy('orders-v1')">orders-v1</a>, <a class="proxy-link" onclick="navigateToProxy('catalog-v1')">catalog-v1</a></td>
-                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">Custom attributes</a></td>
-                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
-                </tr>
-                <tr>
-                  <td>Silver Tier Product</td>
-                  <td>silver-tier-product</td>
-                  <td><a class="proxy-link" onclick="navigateToProxy('inventory-v1')">inventory-v1</a></td>
-                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">1 path</a></td>
-                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
-                </tr>
-                <tr>
-                  <td>Billing Management</td>
-                  <td>billing-mgmt</td>
-                  <td><a class="proxy-link" onclick="navigateToProxy('billing-v1')">billing-v1</a></td>
-                  <td><a onclick="showAdminStep(4)" style="cursor:pointer;">1 path</a></td>
-                  <td class="actions"><a href="#">Edit</a> <a href="#">Map/Unmap APIs</a> <a href="#">Delete</a></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="pagination">Showing 1&ndash;4 of 4 products</div>
+            <div class="pagination-bar"><div class="pag-info"><span>Rows per page:</span><select class="pag-select"><option>10</option><option>25</option><option>50</option></select><span>Showing 1&ndash;4 of 4 products</span></div><div class="pag-controls"><button class="pag-btn" disabled>&laquo;</button><button class="pag-btn" disabled>&lsaquo;</button><button class="pag-btn active">1</button><button class="pag-btn" disabled>&rsaquo;</button><button class="pag-btn" disabled>&raquo;</button></div></div>
           </div>
         </div>
 
-        <!-- ======= Admin 2: Create / Edit Product (second tab) ======= -->
+        <!-- Admin 2: Create / Edit Product -->
         <div id="admin-screen2" class="screen">
           <div class="page-title">Create API Product</div>
           <div class="card">
             <div class="card-title">Product Details</div>
-            <div class="form-row">
-              <label class="required">Product Name</label>
-              <input type="text" placeholder="e.g. User Management, Enterprise Plan" value="User Management" />
-            </div>
-            <div class="form-row">
-              <label>Product ID</label>
-              <input type="text" placeholder="Auto-generated or custom (e.g. user-mgmt)" value="user-mgmt" />
-              <span class="hint">Used in Apigee; must be unique.</span>
-            </div>
+            <div class="form-row"><label class="required">Product Name</label><input type="text" placeholder="e.g. User Management, Enterprise Plan" value="User Management" /></div>
+            <div class="form-row"><label>Product ID</label><input type="text" placeholder="Auto-generated or custom (e.g. user-mgmt)" value="user-mgmt" /><span class="hint">Used in Apigee; must be unique.</span></div>
           </div>
           <div class="card">
             <div class="card-title">Select Proxies (APIs)</div>
-            <div class="card-subtitle">Select proxies to include in this Product. Proxies with Product = "Not Available" are not yet categorized under any CloudXP Product.</div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th style="width:40px;">&#x2610;</th>
-                  <th>Proxy Name</th>
-                  <th>Product</th>
-                  <th>Revision</th>
-                  <th>Environment</th>
-                  <th>Last Deployed</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+            <div class="card-subtitle">Select proxies to include in this Product.</div>
+            <table class="data-table"><thead><tr><th style="width:40px;">&#x2610;</th><th>Proxy Name</th><th>Revision</th><th>Environment</th><th>Last Deployed</th><th>Status</th></tr></thead>
               <tbody>
-                <tr><td><input type="checkbox" /></td><td>orders-v1</td><td>Gold Tier Product</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr><td><input type="checkbox" checked /></td><td>users-v1</td><td>User Management</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr><td><input type="checkbox" /></td><td>catalog-v1</td><td>Gold Tier Product</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr><td><input type="checkbox" /></td><td>billing-v1</td><td>Billing Management</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr><td><input type="checkbox" /></td><td>inventory-v1</td><td>Silver Tier Product</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
-                <tr><td><input type="checkbox" /></td><td>logging-v1</td><td><span class="badge badge-na">Not Available</span></td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>orders-v1</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" checked /></td><td>users-v1</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>catalog-v1</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>billing-v1</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>inventory-v1</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
+                <tr><td><input type="checkbox" /></td><td>logging-v1</td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
               </tbody>
             </table>
-            <span class="hint" style="display:block;margin-top:8px;">Proxies with Product = "Not Available" are not categorized under any CloudXP Product name yet. Selecting them will assign them to this Product.</span>
+            <span class="hint" style="display:block;margin-top:8px;">Select one or more proxies to bundle into this Product.</span>
+            <div class="pagination-bar"><div class="pag-info"><span>Rows per page:</span><select class="pag-select"><option>10</option><option>25</option><option>50</option></select><span>Showing 1&ndash;6 of 6 proxies</span></div><div class="pag-controls"><button class="pag-btn" disabled>&laquo;</button><button class="pag-btn" disabled>&lsaquo;</button><button class="pag-btn active">1</button><button class="pag-btn" disabled>&rsaquo;</button><button class="pag-btn" disabled>&raquo;</button></div></div>
           </div>
-          <div class="footer-actions">
-            <button class="btn btn-primary">Save Product to Apigee</button>
-            <button class="btn btn-secondary" onclick="showAdminStep(1)">Cancel</button>
-          </div>
+          <div class="footer-actions"><button class="btn btn-primary" onclick="saveProduct()">Save</button><button class="btn btn-secondary" onclick="showAdminStep(1)">Cancel</button></div>
         </div>
 
-        <!-- ======= Admin 3: API Proxy Management (third tab, renamed from Deployed Proxies) ======= -->
+        <!-- Admin 3: API Proxy Management -->
         <div id="admin-screen3" class="screen">
           <div class="page-title">API Proxy Management <span style="font-size:14px;color:var(--text-secondary);font-weight:400;">(Discover from Apigee)</span></div>
           <div class="card">
             <div class="card-subtitle">Product Admin can view all deployed Proxies. Data is read from Apigee Management API.</div>
-            <div class="tooltip-block">
-              <strong>MORE ELABORATION REQUIRED:</strong> Exact Apigee API path and which environment(s) to list (e.g. prod only vs all).
-            </div>
+            <div class="tooltip-block"><strong>NEED MORE ELABORATION:</strong> Exact Apigee API path and which environment(s) to list (e.g. prod only vs all).</div>
             <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
               <input type="text" placeholder="Search proxies..." id="proxy-search" style="width:220px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
-              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-env-filter">
-                <option>Environment: All</option>
-                <option>prod</option>
-                <option>test</option>
-              </select>
-              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-product-filter" onchange="filterProxiesByProduct()">
-                <option value="All">Product: All</option>
-                <option value="Gold Tier Product">Gold Tier Product</option>
-                <option value="Silver Tier Product">Silver Tier Product</option>
-                <option value="User Management">User Management</option>
-                <option value="Billing Management">Billing Management</option>
-              </select>
+              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-env-filter"><option>Environment: All</option><option>prod</option><option>test</option></select>
+              <select style="padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" id="proxy-product-filter" onchange="filterProxiesByProduct()"><option value="All">Product: All</option><option value="Gold Tier Product">Gold Tier Product</option><option value="Silver Tier Product">Silver Tier Product</option><option value="User Management">User Management</option><option value="Billing Management">Billing Management</option></select>
               <button class="btn btn-primary btn-small" onclick="refreshFromApigee()">Refresh from Apigee</button>
             </div>
-            <table class="data-table" id="proxy-table">
-              <thead>
-                <tr>
-                  <th>Proxy Name</th>
-                  <th>Product</th>
-                  <th>Revision</th>
-                  <th>Environment</th>
-                  <th>Last Deployed</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="proxy-tbody">
-                <tr data-product="Gold Tier Product" data-proxy="orders-v1"><td>orders-v1</td><td class="prod-col">Gold Tier Product</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr data-product="User Management" data-proxy="users-v1"><td>users-v1</td><td class="prod-col">User Management</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr data-product="Gold Tier Product" data-proxy="catalog-v1"><td>catalog-v1</td><td class="prod-col">Gold Tier Product</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr data-product="Billing Management" data-proxy="billing-v1"><td>billing-v1</td><td class="prod-col">Billing Management</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
-                <tr data-product="Silver Tier Product" data-proxy="inventory-v1"><td>inventory-v1</td><td class="prod-col">Silver Tier Product</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
-                <tr data-product="" data-proxy="logging-v1"><td>logging-v1</td><td class="prod-col"><span class="badge badge-na">Not Available</span></td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
-              </tbody>
-            </table>
-            <div class="pagination" id="proxy-pagination">Showing 1&ndash;6 of 6 proxies</div>
-          </div>
-          <div class="footer-actions">
-            <button class="btn btn-primary" onclick="showAdminStep(2)">Create New Product &rarr;</button>
-            <button class="btn btn-secondary" onclick="showAdminStep(4)">Configure Quotas &rarr;</button>
+            <div style="overflow-x:auto;">
+              <table class="data-table" id="proxy-table"><thead><tr><th>Proxy Name</th><th>Proxy Base Path</th><th>Target (Existing API)</th><th>Product</th><th>Revision</th><th>Environment</th><th>Last Deployed</th><th>Status</th></tr></thead>
+                <tbody id="proxy-tbody">
+                  <tr data-product="Gold Tier Product" data-proxy="orders-v1"><td>orders-v1</td><td>/orders/v1/</td><td>/ordermanagement-bff-v1</td><td class="prod-col">Gold Tier Product</td><td>12</td><td>prod</td><td>10-Feb-2026 14:30</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                  <tr data-product="User Management" data-proxy="users-v1"><td>users-v1</td><td>/users/v1/</td><td>/usermanagement-bff-v1</td><td class="prod-col">User Management</td><td>8</td><td>prod</td><td>09-Feb-2026 11:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                  <tr data-product="Gold Tier Product" data-proxy="catalog-v1"><td>catalog-v1</td><td>/catalog/v1/</td><td>/catalogmanagement-bff-v1</td><td class="prod-col">Gold Tier Product</td><td>5</td><td>prod</td><td>08-Feb-2026 09:15</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                  <tr data-product="Billing Management" data-proxy="billing-v1"><td>billing-v1</td><td>/billing/v1/</td><td>/billingmanagement-bff-v1</td><td class="prod-col">Billing Management</td><td>2</td><td>prod</td><td>07-Feb-2026 10:00</td><td><span class="badge badge-success">Deployed</span></td></tr>
+                  <tr data-product="Silver Tier Product" data-proxy="inventory-v1"><td>inventory-v1</td><td>/inventory/v1/</td><td>/inventorymanagement-bff-v1</td><td class="prod-col">Silver Tier Product</td><td>3</td><td>test</td><td>07-Feb-2026 16:45</td><td><span class="badge badge-info">Test</span></td></tr>
+                  <tr data-product="" data-proxy="logging-v1"><td>logging-v1</td><td>/logging/v1/</td><td>/loggingservice-bff-v1</td><td class="prod-col"><span class="badge badge-na">Not Available</span></td><td>1</td><td>test</td><td>06-Feb-2026 12:00</td><td><span class="badge badge-info">Test</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination-bar"><div class="pag-info"><span>Rows per page:</span><select class="pag-select"><option>10</option><option>25</option><option>50</option></select><span id="proxy-pagination">Showing 1&ndash;6 of 6 proxies</span></div><div class="pag-controls"><button class="pag-btn" disabled>&laquo;</button><button class="pag-btn" disabled>&lsaquo;</button><button class="pag-btn active">1</button><button class="pag-btn" disabled>&rsaquo;</button><button class="pag-btn" disabled>&raquo;</button></div></div>
           </div>
         </div>
 
-        <!-- ======= Admin 4: Quota Configuration (sub-tab of API Proxy Management) ======= -->
+        <!-- Admin 4: Quota Configuration -->
         <div id="admin-screen4" class="screen">
-          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">
-            <a style="color:var(--secondary-blue);cursor:pointer;text-decoration:none;" onclick="showAdminStep(3)">API Proxy Management</a> &rsaquo; Quota Configuration
-          </div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;"><a style="color:var(--secondary-blue);cursor:pointer;text-decoration:none;" onclick="showAdminStep(1)">API Product Management</a> &rsaquo; Quota Configuration</div>
           <div class="page-title">Quota Configuration</div>
           <div class="card">
             <div class="card-subtitle">Define and manage quotas at the resource path level per API Product. Stored via Custom Attributes or Operation Groups (Apigee X).</div>
-            <div class="tooltip-block">
-              <strong>MORE ELABORATION REQUIRED:</strong> Whether map/unmap is at proxy level only or proxy + path; exact Apigee model (proxies vs apiResources/operationGroup).
-            </div>
+            <div class="tooltip-block"><strong>NEED MORE ELABORATION:</strong> Whether map/unmap is at proxy level only or proxy + path; exact Apigee model (proxies vs apiResources/operationGroup).</div>
             <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
-              <div class="form-row" style="margin-bottom:0;">
-                <label class="required" style="margin-bottom:4px;">API Product</label>
-                <select style="max-width:300px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;">
-                  <option>User Management</option>
-                  <option>Gold Tier Product</option>
-                  <option>Silver Tier Product</option>
-                  <option>Billing Management</option>
-                </select>
-              </div>
+              <div class="form-row" style="margin-bottom:0;"><label class="required" style="margin-bottom:4px;">API Product</label><select id="quota-product-select" style="max-width:300px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" onchange="loadQuotaPaths()"><option value="User Management">User Management</option><option value="Gold Tier Product">Gold Tier Product</option><option value="Silver Tier Product">Silver Tier Product</option><option value="Billing Management">Billing Management</option></select></div>
             </div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Resource Path</th>
-                  <th>Method</th>
-                  <th>Quota (calls)</th>
-                  <th>Interval</th>
-                  <th>Time Unit</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>/users</td>
-                  <td>POST</td>
-                  <td>100</td>
-                  <td>1</td>
-                  <td>minute</td>
-                </tr>
-                <tr>
-                  <td>/users/{id}</td>
-                  <td>GET</td>
-                  <td>1000</td>
-                  <td>1</td>
-                  <td>minute</td>
-                </tr>
-                <tr>
-                  <td>/users/{id}</td>
-                  <td>PUT</td>
-                  <td>200</td>
-                  <td>1</td>
-                  <td>minute</td>
-                </tr>
-                <tr>
-                  <td>/users/{id}</td>
-                  <td>DELETE</td>
-                  <td>50</td>
-                  <td>1</td>
-                  <td>hour</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="pagination">Showing 1&ndash;4 of 4 quota rules</div>
+            <table class="data-table"><thead><tr><th>Resource Path</th><th>Method</th><th>Quota (calls)</th><th>Interval</th><th>Time Unit</th></tr></thead><tbody id="quota-tbody"><tr><td>/users</td><td>POST</td><td>100</td><td>1</td><td>minute</td></tr><tr><td>/users/{id}</td><td>GET</td><td>1000</td><td>1</td><td>minute</td></tr><tr><td>/users/{id}</td><td>PUT</td><td>200</td><td>1</td><td>minute</td></tr><tr><td>/users/{id}</td><td>DELETE</td><td>50</td><td>1</td><td>hour</td></tr></tbody></table>
+            <div class="pagination-bar"><div class="pag-info"><span>Rows per page:</span><select class="pag-select"><option>10</option><option>25</option><option>50</option></select><span id="quota-pagination-info">Showing 1&ndash;4 of 4 quota rules</span></div><div class="pag-controls"><button class="pag-btn" disabled>&laquo;</button><button class="pag-btn" disabled>&lsaquo;</button><button class="pag-btn active">1</button><button class="pag-btn" disabled>&rsaquo;</button><button class="pag-btn" disabled>&raquo;</button></div></div>
           </div>
-          <div class="footer-actions">
-            <button class="btn btn-primary">Configure Quota</button>
-            <button class="btn btn-secondary">Modify Quota</button>
-            <button class="btn btn-secondary" onclick="showAdminStep(3)">&larr; Back to API Proxy Management</button>
-          </div>
+          <div class="footer-actions"><button class="btn btn-primary">Configure Quota</button><button class="btn btn-secondary">Modify Quota</button><button class="btn btn-secondary" onclick="showAdminStep(1)">&larr; Back to API Product Management</button></div>
         </div>
       </div>
 
-      <!-- ==================== PUBLIC PORTAL ==================== -->
+      <!-- ==================== PUBLIC PORTAL (v4 – API User Management) ==================== -->
       <div id="public-panel" class="portal-panel">
         <div class="step-nav">
           <strong>Public &ndash; Screen:</strong>
-          <button type="button" onclick="showPublicStep(1)" id="pub-step1">1. Applications Dashboard</button>
-          <button type="button" onclick="showPublicStep(2)" id="pub-step2">2. Create Application</button>
+          <button type="button" onclick="showPublicStep(1)" id="pub-step1">1. API User Management</button>
+          <button type="button" onclick="showPublicStep(2)" id="pub-step2">2. Create API User</button>
         </div>
 
-        <!-- ======= Public 1: Applications Dashboard (enhanced) ======= -->
+        <!-- ======= Public 1: API User Management Dashboard ======= -->
         <div id="public-screen1" class="screen active">
-          <div class="page-title">Applications</div>
+          <div class="page-title">API User Management</div>
           <div class="card">
-            <div class="card-subtitle">Manage your registered applications. Each application holds a single Client ID/Secret valid for Keycloak (JWT) and Apigee (API authorization).</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
-              <input type="text" placeholder="Search applications..." style="width:260px;padding:8px 12px;border:1px solid var(--border-input);border-radius:4px;" />
-              <button class="btn btn-primary" onclick="showPublicStep(2)">+ Create Application</button>
+            <div class="card-subtitle">Manage your registered API Users. Each API User holds a single Client ID/Secret valid for Keycloak (JWT) and Apigee (API authorization).</div>
+            <div class="action-bar">
+              <input type="text" class="search-box" placeholder="Search API users..." />
+              <span class="spacer"></span>
+              <button class="btn btn-primary btn-small" onclick="showPublicStep(2)">+ Create API User</button>
+              <button class="btn btn-secondary btn-small" onclick="editApiUserAction()">Edit API User</button>
+              <button class="btn btn-danger btn-small" onclick="deleteApiUserAction()">Delete API User</button>
+              <button class="btn btn-danger btn-small" onclick="revokeSecretAction()">Revoke Secret</button>
+              <button class="btn btn-warning btn-small" onclick="regenerateSecretAction()">Regenerate Secret</button>
+            </div>
+            <div class="tooltip-block" style="margin-top:0;margin-bottom:12px;">
+              <strong>NEED MORE ELABORATION:</strong> Revoke Secret behaviour (soft delete vs hard delete vs disable in Keycloak + Apigee). Regenerate Secret behaviour (invalidate old secret immediately or grace period).
             </div>
             <div style="overflow-x:auto;">
-              <table class="data-table">
+              <table class="data-table" id="apiuser-table">
                 <thead>
                   <tr>
-                    <th>App Name</th>
-                    <th>Project Name</th>
-                    <th>Project ID</th>
+                    <th style="width:40px;"><input type="checkbox" onclick="toggleAllApiUsers(this)" /></th>
+                    <th>API User Name</th>
+                    <th>Project</th>
                     <th>API Products</th>
-                    <th>Proxies</th>
-                    <th>View Credentials</th>
+                    <th>Secret Expiry Date</th>
+                    <th>User Status</th>
+                    <th>Secret Status</th>
                     <th>Created By</th>
                     <th>Created On</th>
                     <th>Updated By</th>
                     <th>Updated On</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Billing Service App</td>
-                    <td>Project123</td>
-                    <td>proj-123</td>
-                    <td>User Management, Gold Tier Product</td>
-                    <td>users-v1, orders-v1, catalog-v1</td>
-                    <td><a onclick="openSidePanel('Billing Service App')">View</a></td>
+                  <tr data-secret-status="Active">
+                    <td><input type="checkbox" class="apiuser-cb" /></td>
+                    <td>billing-svc-user</td>
+                    <td><a onclick="showProjectPanel(['Project123','Project456'],['proj-123','proj-456'])">2</a></td>
+                    <td><a onclick="showProductProxyPanel(['User Management','Gold Tier Product'])">2</a></td>
+                    <td>12-04-2026</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td><span class="badge badge-success">Active</span></td>
                     <td>customer.admin@acme.com</td>
                     <td>10-Feb-2026 09:30</td>
                     <td>customer.admin@acme.com</td>
                     <td>11-Feb-2026 14:15</td>
-                    <td class="actions">
-                      <button class="btn btn-danger btn-small">Revoke App</button>
-                      <button class="btn btn-warning btn-small">Regenerate Secret</button>
-                    </td>
                   </tr>
-                  <tr>
-                    <td>Analytics Pipeline</td>
-                    <td>Project456</td>
-                    <td>proj-456</td>
-                    <td>Silver Tier Product</td>
-                    <td>inventory-v1</td>
-                    <td><a onclick="openSidePanel('Analytics Pipeline')">View</a></td>
+                  <tr data-secret-status="Expired">
+                    <td><input type="checkbox" class="apiuser-cb" /></td>
+                    <td>analytics-pipeline-user</td>
+                    <td><a onclick="showProjectPanel(['Project456'],['proj-456'])">1</a></td>
+                    <td><a onclick="showProductProxyPanel(['Silver Tier Product'])">1</a></td>
+                    <td>09-04-2026</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td><span class="badge badge-warning">Expired</span></td>
                     <td>ops.lead@acme.com</td>
                     <td>08-Feb-2026 16:00</td>
                     <td>ops.lead@acme.com</td>
                     <td>08-Feb-2026 16:00</td>
-                    <td class="actions">
-                      <button class="btn btn-danger btn-small">Revoke App</button>
-                      <button class="btn btn-warning btn-small">Regenerate Secret</button>
-                    </td>
+                  </tr>
+                  <tr data-secret-status="Revoked">
+                    <td><input type="checkbox" class="apiuser-cb" /></td>
+                    <td>inventory-sync-user</td>
+                    <td><a onclick="showProjectPanel(['Default Project'],['proj-default'])">1</a></td>
+                    <td><a onclick="showProductProxyPanel(['Billing Management'])">1</a></td>
+                    <td>15-06-2026</td>
+                    <td><span class="badge badge-na">Inactive</span></td>
+                    <td><span class="badge badge-danger">Revoked</span></td>
+                    <td>dev.ops@acme.com</td>
+                    <td>05-Feb-2026 10:00</td>
+                    <td>dev.ops@acme.com</td>
+                    <td>05-Feb-2026 10:00</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div class="pagination">Showing 1&ndash;2 of 2 applications</div>
-            <div class="tooltip-block">
-              <strong>MORE ELABORATION REQUIRED:</strong> Revoke App behaviour (soft delete vs hard delete vs disable in Keycloak + Apigee). Regenerate Secret behaviour (invalidate old secret immediately or grace period).
-            </div>
+            <div class="pagination-bar"><div class="pag-info"><span>Rows per page:</span><select class="pag-select"><option>10</option><option>25</option><option>50</option></select><span>Showing 1&ndash;3 of 3 API users</span></div><div class="pag-controls"><button class="pag-btn" disabled>&laquo;</button><button class="pag-btn" disabled>&lsaquo;</button><button class="pag-btn active">1</button><button class="pag-btn" disabled>&rsaquo;</button><button class="pag-btn" disabled>&raquo;</button></div></div>
           </div>
         </div>
 
-        <!-- ======= Public 2: Create Application (enhanced) ======= -->
+        <!-- ======= Public 2: Create API User ======= -->
         <div id="public-screen2" class="screen">
-          <div class="page-title">Create New Application</div>
+          <div class="page-title">Create API User</div>
           <div class="info-block">
             <h4>Single credential for Keycloak + Apigee</h4>
-            <p>Creating an Application provisions a Client in Keycloak and a Developer App in Apigee with the same Client ID and Client Secret. Use these credentials to get a JWT from Keycloak and call APIs via Apigee.</p>
+            <p>Creating an API User provisions a Client in Keycloak and a Developer App in Apigee with the same Client ID and Client Secret. Use these credentials to get a JWT from Keycloak and call APIs via Apigee.</p>
           </div>
           <div class="card">
-            <div class="card-title">Application Details</div>
+            <div class="card-title">API User Configuration</div>
             <div class="form-row">
-              <label class="required">App Name</label>
-              <input type="text" placeholder="e.g. My Billing Integration" value="Billing Service App" />
+              <label class="required">API User Name</label>
+              <input type="text" id="api-user-name" placeholder="e.g. billing-svc-user (lowercase, alphanumeric, hyphens)" value="" />
+              <span class="hint">Must follow Keycloak username validation: 3&ndash;255 characters, lowercase alphanumeric, hyphens and underscores allowed. No spaces or special characters. <span class="need-elab" title="NEED MORE ELABORATION: Confirm exact Keycloak username validation rules applicable.">Validation rules</span></span>
+            </div>
+
+            <!-- Multi-select Project Name with checkboxes -->
+            <div class="form-row">
+              <label class="required">Project Name <span style="font-size:11px;color:var(--warning-amber);font-weight:400;cursor:help;" title="Maximum 10 Projects can be selected while creating a single user account.">&nbsp;&#9432; Max 10 Projects</span></label>
+              <div class="cb-dropdown" id="project-dropdown">
+                <div class="cb-dropdown-trigger" onclick="toggleProjectDropdown()">
+                  <span id="project-dropdown-label">-- Select Projects --</span>
+                </div>
+                <div class="cb-dropdown-menu" id="project-dropdown-menu">
+                  <label><input type="checkbox" value="Default Project" data-id="proj-default" onchange="updateProjectSelection()" /> Default Project</label>
+                  <label><input type="checkbox" value="Project123" data-id="proj-123" onchange="updateProjectSelection()" /> Project123</label>
+                  <label><input type="checkbox" value="Project456" data-id="proj-456" onchange="updateProjectSelection()" /> Project456</label>
+                  <label><input type="checkbox" value="Project789" data-id="proj-789" onchange="updateProjectSelection()" /> Project789</label>
+                  <label><input type="checkbox" value="ProjectAlpha" data-id="proj-alpha" onchange="updateProjectSelection()" /> ProjectAlpha</label>
+                </div>
+              </div>
+              <span class="hint">Select one or more projects. The claim <code>project_id</code> will be added to the JWT.</span>
             </div>
             <div class="form-row">
-              <label>Realm</label>
-              <select disabled style="background:#F3F4F6;max-width:300px;">
-                <option>HCMPAPI</option>
-              </select>
-              <span class="hint">Keycloak Realm (read-only). <span class="need-elab" title="MORE ELABORATION REQUIRED: Confirm if Realm is always HCMPAPI or configurable per org.">Realm assignment</span></span>
+              <label>Project ID</label>
+              <input type="text" id="project-id-auto" value="" readonly style="background:#F3F4F6;max-width:480px;" placeholder="Auto-populated based on Project Name selection" />
+              <span class="hint">Auto-populated (comma-separated) based on Project Name selection.</span>
             </div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;">
-              <div class="form-row" style="flex:1;min-width:200px;">
-                <label class="required">Project Name</label>
-                <select id="project-name-select" onchange="autoPopulateProjectId()" style="max-width:300px;">
-                  <option value="">-- Select Project --</option>
-                  <option value="proj-default" selected>Default Project</option>
-                  <option value="proj-123">Project123</option>
-                  <option value="proj-456">Project456</option>
-                </select>
-                <span class="hint">Select a project. The claim <code>project_id</code> will be added to the JWT.</span>
-              </div>
-              <div class="form-row" style="flex:1;min-width:200px;">
-                <label>Project ID</label>
-                <input type="text" id="project-id-auto" value="proj-default" readonly style="background:#F3F4F6;max-width:300px;" />
-                <span class="hint">Auto-populated based on Project Name selection.</span>
-              </div>
-            </div>
+
+            <!-- API Products with checkboxes -->
             <div class="form-row">
               <label class="required">API Products</label>
-              <select multiple style="min-height:100px;max-width:480px;" id="api-product-select" onchange="showSelectedProxies()">
-                <option value="user-mgmt">User Management</option>
-                <option value="gold-tier">Gold Tier Product</option>
-                <option value="silver-tier">Silver Tier Product</option>
-                <option value="billing-mgmt">Billing Management</option>
-              </select>
-              <span class="hint">Select one or more API Products this application can access via Apigee.</span>
+              <div class="cb-list" id="api-product-cblist">
+                <label><input type="checkbox" value="user-mgmt" onchange="showSelectedProxies()" /> User Management</label>
+                <label><input type="checkbox" value="gold-tier" onchange="showSelectedProxies()" /> Gold Tier Product</label>
+                <label><input type="checkbox" value="silver-tier" onchange="showSelectedProxies()" /> Silver Tier Product</label>
+                <label><input type="checkbox" value="billing-mgmt" onchange="showSelectedProxies()" /> Billing Management</label>
+              </div>
+              <span class="hint">Select one or more API Products this API User can access via Apigee.</span>
             </div>
-            <!-- Associated Proxies table (shown when products selected) -->
+
+            <!-- Associated Proxies table -->
             <div id="associated-proxies-section" style="display:none;margin-top:16px;">
               <div class="card-title" style="font-size:14px;">Associated Proxies (from selected API Products)</div>
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Proxy Name</th>
-                    <th>Revision</th>
-                    <th>Last Deployed</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="associated-proxies-tbody"></tbody>
-              </table>
+              <table class="data-table"><thead><tr><th>Proxy Name</th><th>Revision</th><th>Last Deployed</th><th>Status</th></tr></thead><tbody id="associated-proxies-tbody"></tbody></table>
             </div>
+
+            <div class="form-row" style="margin-top:16px;">
+              <label class="required">Client Secret Expiry</label>
+              <select style="max-width:300px;">
+                <option>30 Days</option><option>60 Days</option><option>90 Days</option><option>180 Days</option><option>365 Days</option>
+              </select>
+              <span class="hint">Client Secret validity period from the date of creation. <span class="need-elab" title="NEED MORE ELABORATION: Confirm if custom expiry date input is also required.">Custom expiry</span></span>
+            </div>
+
             <div class="tooltip-block" style="margin-top:16px;">
-              <strong>MORE ELABORATION REQUIRED:</strong> Mapping of Customer Admin to Apigee Developer (one per org vs per user vs per app).
+              <strong>NEED MORE ELABORATION:</strong> Mapping of Customer Admin to Apigee Developer (one per org vs per user vs per API User).
             </div>
           </div>
           <div class="footer-actions">
-            <button class="btn btn-primary" onclick="createAppSuccess()">Create Application</button>
+            <button class="btn btn-primary" onclick="createApiUser()">Create API User</button>
             <button class="btn btn-secondary" onclick="showPublicStep(1)">Cancel</button>
+          </div>
+        </div>
+
+        <!-- ======= Public 3: Client Secret (intermittent screen) ======= -->
+        <div id="public-screen3" class="screen">
+          <div class="page-title">Client Secret Generated</div>
+          <div class="card" style="max-width:640px;">
+            <div class="card-title">Your Client Secret</div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">The API User has been provisioned. Below is the generated Client Secret for authentication.</p>
+            <div class="credential-box">
+              <label>Client Secret</label>
+              <div id="generated-secret">xK9mP2qR7sT4uV6wA1bC3dE5fG8hJ0nL</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+              <button class="btn btn-primary btn-small" onclick="copyText('generated-secret')">Copy Client Secret</button>
+            </div>
+            <div class="warning-callout">
+              <span class="warn-icon">&#9888;</span>
+              <p>Warning &ndash; Make sure you copy the Secret now. We don't store it and you will not be able to see it again.</p>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="btn btn-primary" onclick="showPublicStep(1)">Go to API User Management</button>
           </div>
         </div>
       </div>
@@ -598,7 +539,7 @@
   </div>
 
   <footer style="padding:12px 24px;background:var(--bg-white);border-top:1px solid var(--border-gray);font-size:12px;color:var(--text-secondary);">
-    Jio CloudXP Platform. Copyright &copy; 2026 Reliance Jio Infocom Ltd. All rights reserved. | Stakeholder mockup v2 &ndash; APIGEE Product & Application Onboarding (Enhanced). Not for production use.
+    Jio CloudXP Platform. Copyright &copy; 2026 Reliance Jio Infocom Ltd. All rights reserved. | Stakeholder mockup v4 &ndash; APIGEE Product & API User Onboarding (Enhanced). Not for production use.
   </footer>
 
   <script>
@@ -612,7 +553,7 @@
       document.getElementById('public-panel').classList.toggle('active', portal === 'public');
       document.getElementById('breadcrumb').textContent = portal === 'admin'
         ? 'Home > Administration > API Gateway > Products'
-        : 'Home > My Workspace > Applications';
+        : 'Home > My Workspace > API Users';
     }
 
     /* ---- Admin step nav ---- */
@@ -623,110 +564,262 @@
         var btn = document.getElementById('adm-step' + i);
         if (btn) btn.classList.toggle('active', i === n);
       }
-      document.querySelectorAll('#sidebar-admin .sidebar-item').forEach(function(item, idx) {
-        item.classList.toggle('active', idx === n - 1);
-      });
+      document.querySelectorAll('#sidebar-admin .sidebar-item').forEach(function(item, idx) { item.classList.toggle('active', idx === n - 1); });
       if (n === 3) resetProxyFilter();
     }
 
     /* ---- Public step nav ---- */
     function showPublicStep(n) {
-      for (var i = 1; i <= 2; i++) {
+      for (var i = 1; i <= 3; i++) {
         var el = document.getElementById('public-screen' + i);
         if (el) el.classList.toggle('active', i === n);
-        var btn = document.getElementById('pub-step' + i);
-        if (btn) btn.classList.toggle('active', i === n);
       }
+      document.getElementById('pub-step1').classList.toggle('active', n === 1);
+      document.getElementById('pub-step2').classList.toggle('active', n === 2 || n === 3);
       document.querySelectorAll('#sidebar-public .sidebar-item').forEach(function(item, idx) {
-        item.classList.toggle('active', idx === n - 1);
+        item.classList.toggle('active', (n === 1 && idx === 0) || ((n === 2 || n === 3) && idx === 1));
       });
     }
 
-    /* ---- Admin: Refresh from Apigee (toast) ---- */
-    function refreshFromApigee() {
+    /* ---- Toast helper ---- */
+    function showToast(msg, duration) {
       var toast = document.getElementById('toast');
+      toast.textContent = msg;
       toast.classList.add('show');
-      setTimeout(function() { toast.classList.remove('show'); }, 2500);
+      setTimeout(function() { toast.classList.remove('show'); }, duration || 2500);
     }
 
-    /* ---- Admin: Filter proxies by Product dropdown ---- */
+    /* ---- Admin: Refresh from Apigee ---- */
+    function refreshFromApigee() { showToast('Proxies are synced from Apigee.', 2500); }
+
+    /* ---- Admin: Save Product ---- */
+    function saveProduct() { showToast('Product information created on APIGEE.', 3000); }
+
+    /* ---- Admin: Toggle all product checkboxes ---- */
+    function toggleAllProducts(master) { document.querySelectorAll('.product-cb').forEach(function(cb) { cb.checked = master.checked; }); }
+    function getSelectedProducts() {
+      var s = []; document.querySelectorAll('.product-cb:checked').forEach(function(cb) { s.push(cb.value); }); return s;
+    }
+    function viewQuotaForSelected() {
+      var s = getSelectedProducts();
+      if (s.length === 0) { showToast('Please select a product to view Quota Configuration.', 2500); return; }
+      if (s.length > 1) { showToast('Please select only one product to view Quota Configuration.', 2500); return; }
+      document.getElementById('quota-product-select').value = s[0]; loadQuotaPaths(); showAdminStep(4);
+    }
+    function editSelectedProduct() {
+      var s = getSelectedProducts();
+      if (s.length === 0) { showToast('Please select a product to edit.', 2500); return; }
+      if (s.length > 1) { showToast('Please select only one product to edit.', 2500); return; }
+      showAdminStep(2);
+    }
+    function mapUnmapAPIs() {
+      var s = getSelectedProducts();
+      if (s.length === 0) { showToast('Please select a product to map/unmap APIs.', 2500); return; }
+      showToast('Map/Unmap APIs action triggered for: ' + s.join(', '), 2500);
+    }
+    function deleteSelectedProduct() {
+      var s = getSelectedProducts();
+      if (s.length === 0) { showToast('Please select a product to delete.', 2500); return; }
+      showToast('Delete action triggered for: ' + s.join(', '), 2500);
+    }
+
+    /* ---- Admin: Quota paths ---- */
+    var quotaData = {
+      'User Management': [{ path:'/users',method:'POST',quota:'100',interval:'1',unit:'minute' },{ path:'/users/{id}',method:'GET',quota:'1000',interval:'1',unit:'minute' },{ path:'/users/{id}',method:'PUT',quota:'200',interval:'1',unit:'minute' },{ path:'/users/{id}',method:'DELETE',quota:'50',interval:'1',unit:'hour' }],
+      'Gold Tier Product': [{ path:'/orders',method:'POST',quota:'500',interval:'1',unit:'minute' },{ path:'/orders/{id}',method:'GET',quota:'2000',interval:'1',unit:'minute' },{ path:'/catalog',method:'GET',quota:'5000',interval:'1',unit:'minute' },{ path:'/catalog/{id}',method:'GET',quota:'3000',interval:'1',unit:'minute' }],
+      'Silver Tier Product': [{ path:'/inventory',method:'GET',quota:'800',interval:'1',unit:'minute' },{ path:'/inventory/{id}',method:'GET',quota:'500',interval:'1',unit:'minute' },{ path:'/inventory/{id}',method:'PUT',quota:'100',interval:'1',unit:'minute' }],
+      'Billing Management': [{ path:'/billing',method:'POST',quota:'300',interval:'1',unit:'minute' },{ path:'/billing/{id}',method:'GET',quota:'1500',interval:'1',unit:'minute' }]
+    };
+    function loadQuotaPaths() {
+      var p = document.getElementById('quota-product-select').value, rows = quotaData[p] || [], tbody = document.getElementById('quota-tbody');
+      tbody.innerHTML = '';
+      rows.forEach(function(r) { tbody.innerHTML += '<tr><td>'+r.path+'</td><td>'+r.method+'</td><td>'+r.quota+'</td><td>'+r.interval+'</td><td>'+r.unit+'</td></tr>'; });
+      document.getElementById('quota-pagination-info').textContent = 'Showing 1\u2013' + rows.length + ' of ' + rows.length + ' quota rules';
+    }
+
+    /* ---- Admin: Filter proxies ---- */
     function filterProxiesByProduct() {
-      var val = document.getElementById('proxy-product-filter').value;
-      var rows = document.querySelectorAll('#proxy-tbody tr');
-      var count = 0;
-      rows.forEach(function(row) {
-        var prod = row.getAttribute('data-product');
-        if (val === 'All' || prod === val) { row.style.display = ''; count++; }
-        else { row.style.display = 'none'; }
-      });
+      var val = document.getElementById('proxy-product-filter').value, rows = document.querySelectorAll('#proxy-tbody tr'), count = 0;
+      rows.forEach(function(row) { var p = row.getAttribute('data-product'); if (val === 'All' || p === val) { row.style.display = ''; count++; } else { row.style.display = 'none'; } });
       document.getElementById('proxy-pagination').textContent = 'Showing 1\u2013' + count + ' of ' + count + ' proxies';
     }
-    function resetProxyFilter() {
-      document.getElementById('proxy-product-filter').value = 'All';
-      filterProxiesByProduct();
-    }
-
-    /* ---- Admin: Navigate to Deployed Proxies filtered to one proxy (from Product Mgmt) ---- */
+    function resetProxyFilter() { document.getElementById('proxy-product-filter').value = 'All'; filterProxiesByProduct(); }
     function navigateToProxy(proxyName) {
       showAdminStep(3);
-      var rows = document.querySelectorAll('#proxy-tbody tr');
-      var count = 0;
-      rows.forEach(function(row) {
-        if (row.getAttribute('data-proxy') === proxyName) { row.style.display = ''; count++; }
-        else { row.style.display = 'none'; }
-      });
+      var rows = document.querySelectorAll('#proxy-tbody tr'), count = 0;
+      rows.forEach(function(row) { if (row.getAttribute('data-proxy') === proxyName) { row.style.display = ''; count++; } else { row.style.display = 'none'; } });
       document.getElementById('proxy-product-filter').value = 'All';
       document.getElementById('proxy-search').value = proxyName;
       document.getElementById('proxy-pagination').textContent = 'Showing 1\u2013' + count + ' of ' + count + ' proxies (filtered: ' + proxyName + ')';
     }
 
-    /* ---- Public: Auto-populate Project ID ---- */
-    function autoPopulateProjectId() {
-      var sel = document.getElementById('project-name-select');
-      document.getElementById('project-id-auto').value = sel.value || '';
+    /* ---- Public: Project multi-select dropdown ---- */
+    function toggleProjectDropdown() {
+      document.getElementById('project-dropdown-menu').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('project-dropdown');
+      if (dd && !dd.contains(e.target)) document.getElementById('project-dropdown-menu').classList.remove('open');
+    });
+    function updateProjectSelection() {
+      var cbs = document.querySelectorAll('#project-dropdown-menu input[type="checkbox"]');
+      var names = [], ids = [], count = 0;
+      cbs.forEach(function(cb) { if (cb.checked) { count++; names.push(cb.value); ids.push(cb.getAttribute('data-id')); } });
+      if (count > 10) { showToast('Maximum 10 Projects can be selected while creating a single user account.', 2500); event.target.checked = false; return; }
+      document.getElementById('project-dropdown-label').textContent = names.length ? names.join(', ') : '-- Select Projects --';
+      document.getElementById('project-id-auto').value = ids.join(', ');
     }
 
-    /* ---- Public: Show associated proxies when API Products selected ---- */
+    /* ---- Public: API Products checkbox + associated proxies ---- */
     var proxyMap = {
-      'user-mgmt': [{ name: 'users-v1', rev: '8', deployed: '09-Feb-2026 11:00', status: 'Deployed' }],
-      'gold-tier': [{ name: 'orders-v1', rev: '12', deployed: '10-Feb-2026 14:30', status: 'Deployed' }, { name: 'catalog-v1', rev: '5', deployed: '08-Feb-2026 09:15', status: 'Deployed' }],
-      'silver-tier': [{ name: 'inventory-v1', rev: '3', deployed: '07-Feb-2026 16:45', status: 'Test' }],
-      'billing-mgmt': [{ name: 'billing-v1', rev: '2', deployed: '07-Feb-2026 10:00', status: 'Deployed' }]
+      'user-mgmt': [{ name:'users-v1', rev:'8', deployed:'09-Feb-2026 11:00', status:'Deployed' }],
+      'gold-tier': [{ name:'orders-v1', rev:'12', deployed:'10-Feb-2026 14:30', status:'Deployed' },{ name:'catalog-v1', rev:'5', deployed:'08-Feb-2026 09:15', status:'Deployed' }],
+      'silver-tier': [{ name:'inventory-v1', rev:'3', deployed:'07-Feb-2026 16:45', status:'Test' }],
+      'billing-mgmt': [{ name:'billing-v1', rev:'2', deployed:'07-Feb-2026 10:00', status:'Deployed' }]
     };
     function showSelectedProxies() {
-      var sel = document.getElementById('api-product-select');
-      var chosen = Array.from(sel.selectedOptions).map(function(o) { return o.value; });
-      var section = document.getElementById('associated-proxies-section');
-      var tbody = document.getElementById('associated-proxies-tbody');
+      var cbs = document.querySelectorAll('#api-product-cblist input[type="checkbox"]:checked');
+      var chosen = Array.from(cbs).map(function(cb) { return cb.value; });
+      var section = document.getElementById('associated-proxies-section'), tbody = document.getElementById('associated-proxies-tbody');
       tbody.innerHTML = '';
       var seen = {};
       chosen.forEach(function(p) {
         (proxyMap[p] || []).forEach(function(px) {
-          if (!seen[px.name]) {
-            seen[px.name] = true;
-            var cls = px.status === 'Deployed' ? 'badge-success' : 'badge-info';
-            tbody.innerHTML += '<tr><td>' + px.name + '</td><td>' + px.rev + '</td><td>' + px.deployed + '</td><td><span class="badge ' + cls + '">' + px.status + '</span></td></tr>';
-          }
+          if (!seen[px.name]) { seen[px.name] = true; var cls = px.status === 'Deployed' ? 'badge-success' : 'badge-info';
+            tbody.innerHTML += '<tr><td>'+px.name+'</td><td>'+px.rev+'</td><td>'+px.deployed+'</td><td><span class="badge '+cls+'">'+px.status+'</span></td></tr>'; }
         });
       });
       section.style.display = tbody.innerHTML ? 'block' : 'none';
     }
 
-    /* ---- Public: Create Application success -> show toast notification ---- */
-    function createAppSuccess() {
-      var toast = document.getElementById('toast');
-      toast.textContent = 'App is successfully created in APIGEE. To access Client ID and Client Secret, check the credentials from dashboard.';
-      toast.classList.add('show');
-      setTimeout(function() {
-        toast.classList.remove('show');
-        toast.textContent = 'Proxies are synced from Apigee.';
-        showPublicStep(1);
-      }, 3000);
+    /* ---- Public: Create API User ---- */
+    function createApiUser() {
+      showToast('API User is created and associated Client Secret is generated for use in access token.', 3000);
+      setTimeout(function() { showPublicStep(3); }, 1500);
     }
 
-    /* ---- Side panel (credentials drawer) ---- */
-    function openSidePanel(appName) {
-      document.getElementById('sp-title').textContent = 'Credentials \u2013 ' + appName;
+    /* ---- Public: Dashboard – toggle all checkboxes ---- */
+    function toggleAllApiUsers(master) { document.querySelectorAll('.apiuser-cb').forEach(function(cb) { cb.checked = master.checked; }); }
+
+    /* ---- Public: Get selected row ---- */
+    function getSelectedApiUserRow() {
+      var checked = document.querySelectorAll('.apiuser-cb:checked');
+      if (checked.length === 0) { showToast('Please select an API User.', 2500); return null; }
+      if (checked.length > 1) { showToast('Please select only one API User.', 2500); return null; }
+      return checked[0].closest('tr');
+    }
+
+    /* ---- Public: Edit API User ---- */
+    function editApiUserAction() {
+      var row = getSelectedApiUserRow(); if (!row) return;
+      var cells = row.querySelectorAll('td');
+      var userName = cells[1].textContent;
+      document.getElementById('api-user-name').value = userName;
+      showPublicStep(2);
+      showToast('Editing API User: ' + userName + '. Modify fields and click Save.', 2500);
+    }
+
+    /* ---- Public: Delete API User ---- */
+    function deleteApiUserAction() {
+      var row = getSelectedApiUserRow(); if (!row) return;
+      var cells = row.querySelectorAll('td');
+      var userName = cells[1].textContent;
+      showModal('Delete API User', 'Are you sure you want to delete the API User "' + userName + '"? This action cannot be undone.', [
+        { label: 'Delete', cls: 'btn btn-danger', action: function() {
+          closeModal();
+          row.remove();
+          showToast('API User "' + userName + '" has been deleted successfully.', 2500);
+        }},
+        { label: 'Cancel', cls: 'btn btn-secondary', action: function() { closeModal(); }}
+      ]);
+    }
+
+    /* ---- Public: Revoke Secret ---- */
+    function revokeSecretAction() {
+      var row = getSelectedApiUserRow(); if (!row) return;
+      var status = row.getAttribute('data-secret-status');
+      if (status === 'Revoked') { showToast('Cannot revoke: Secret is already Revoked for this API User.', 2500); return; }
+      showModal('Revoke Secret', 'Are you sure you want to revoke the Secret?', [
+        { label: 'Revoke', cls: 'btn btn-danger', action: function() {
+          closeModal();
+          row.setAttribute('data-secret-status', 'Revoked');
+          var cells = row.querySelectorAll('td');
+          cells[6].innerHTML = '<span class="badge badge-danger">Revoked</span>';
+          showToast('Secret has been revoked successfully.', 2500);
+        }},
+        { label: 'Cancel', cls: 'btn btn-secondary', action: function() { closeModal(); }}
+      ]);
+    }
+
+    /* ---- Public: Regenerate Secret ---- */
+    function regenerateSecretAction() {
+      var row = getSelectedApiUserRow(); if (!row) return;
+      var status = row.getAttribute('data-secret-status');
+      if (status === 'Revoked') { showToast('Cannot regenerate: Secret is Revoked for this API User. Revoked secrets cannot be regenerated.', 3000); return; }
+      showModal('Regenerate Secret', 'Are you sure you want to regenerate the Secret?', [
+        { label: 'Regenerate', cls: 'btn btn-warning', action: function() {
+          closeModal();
+          row.setAttribute('data-secret-status', 'Active');
+          var cells = row.querySelectorAll('td');
+          cells[6].innerHTML = '<span class="badge badge-success">Active</span>';
+          showToast('Secret has been regenerated successfully.', 2500);
+          setTimeout(function() { showPublicStep(3); }, 1200);
+        }},
+        { label: 'Cancel', cls: 'btn btn-secondary', action: function() { closeModal(); }}
+      ]);
+    }
+
+    /* ---- Modal helpers ---- */
+    function showModal(title, msg, buttons) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-msg').textContent = msg;
+      var actionsDiv = document.getElementById('modal-actions');
+      actionsDiv.innerHTML = '';
+      buttons.forEach(function(b) {
+        var btn = document.createElement('button');
+        btn.className = b.cls;
+        btn.textContent = b.label;
+        btn.onclick = b.action;
+        actionsDiv.appendChild(btn);
+      });
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+    /* ---- Side panel: show Projects ---- */
+    function showProjectPanel(names, ids) {
+      var html = '<table class="data-table"><thead><tr><th>Project Name</th><th>Project ID</th></tr></thead><tbody>';
+      for (var i = 0; i < names.length; i++) html += '<tr><td>' + names[i] + '</td><td>' + ids[i] + '</td></tr>';
+      html += '</tbody></table>';
+      openSidePanel('Associated Projects', html);
+    }
+
+    /* ---- Side panel: show API Products & Proxies ---- */
+    var productProxyMap = {
+      'User Management': [{ name:'users-v1', basePath:'/users/v1/', target:'/usermanagement-bff-v1', rev:'8', env:'prod', deployed:'09-Feb-2026 11:00', status:'Deployed' }],
+      'Gold Tier Product': [{ name:'orders-v1', basePath:'/orders/v1/', target:'/ordermanagement-bff-v1', rev:'12', env:'prod', deployed:'10-Feb-2026 14:30', status:'Deployed' },{ name:'catalog-v1', basePath:'/catalog/v1/', target:'/catalogmanagement-bff-v1', rev:'5', env:'prod', deployed:'08-Feb-2026 09:15', status:'Deployed' }],
+      'Silver Tier Product': [{ name:'inventory-v1', basePath:'/inventory/v1/', target:'/inventorymanagement-bff-v1', rev:'3', env:'test', deployed:'07-Feb-2026 16:45', status:'Test' }],
+      'Billing Management': [{ name:'billing-v1', basePath:'/billing/v1/', target:'/billingmanagement-bff-v1', rev:'2', env:'prod', deployed:'07-Feb-2026 10:00', status:'Deployed' }]
+    };
+    function showProductProxyPanel(products) {
+      var html = '';
+      products.forEach(function(p) {
+        html += '<h4 style="margin:16px 0 8px;font-size:15px;color:var(--primary-blue);">' + p + '</h4>';
+        var proxies = productProxyMap[p] || [];
+        html += '<table class="data-table"><thead><tr><th>Proxy Name</th><th>Base Path</th><th>Target</th><th>Rev</th><th>Env</th><th>Status</th></tr></thead><tbody>';
+        proxies.forEach(function(px) {
+          var cls = px.status === 'Deployed' ? 'badge-success' : 'badge-info';
+          html += '<tr><td>'+px.name+'</td><td>'+px.basePath+'</td><td>'+px.target+'</td><td>'+px.rev+'</td><td>'+px.env+'</td><td><span class="badge '+cls+'">'+px.status+'</span></td></tr>';
+        });
+        html += '</tbody></table>';
+      });
+      openSidePanel('API Products & Mapped Proxies', html);
+    }
+
+    /* ---- Side panel core ---- */
+    function openSidePanel(title, bodyHtml) {
+      document.getElementById('sp-title').textContent = title;
+      document.getElementById('sp-body').innerHTML = bodyHtml;
       document.getElementById('sp-overlay').classList.add('open');
       document.getElementById('sp-drawer').classList.add('open');
     }
@@ -736,18 +829,14 @@
     }
     function copyText(elId) {
       var text = document.getElementById(elId).textContent;
-      if (navigator.clipboard) { navigator.clipboard.writeText(text); }
-      var toast = document.getElementById('toast');
-      toast.textContent = 'Copied to clipboard.';
-      toast.classList.add('show');
-      setTimeout(function() { toast.classList.remove('show'); toast.textContent = 'Proxies are synced from Apigee.'; }, 1500);
+      if (navigator.clipboard) navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard.', 1500);
     }
 
     /* ---- Init ---- */
     document.getElementById('adm-step1').classList.add('active');
     document.getElementById('pub-step1').classList.add('active');
     filterProxiesByProduct();
-    autoPopulateProjectId();
   </script>
 </body>
 </html>
